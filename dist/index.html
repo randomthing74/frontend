@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RehabSys - Robot Terapi Rehabilitasi Lengan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- SheetJS untuk export Excel -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <!-- Chart.js untuk grafik fuzzy -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="module" crossorigin src="/assets/index-DCqRqiL8.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-NKM6B5wN.css">
+</head>
+<body>
+
+<div class="app-layout">
+    
+    <!-- 🧭 SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo">⚕️</div>
+            <h1>RehabSys</h1>
+            <div class="brand-sub">Monitoring v1.0</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="active" id="nav-home" data-section="home">
+                <span class="nav-icon">🏠</span>
+                <span>Home</span>
+            </a>
+            <a href="#" id="nav-hasil" data-section="hasil">
+                <span class="nav-icon">📊</span>
+                <span>Hasil Monitoring</span>
+            </a>
+            <a href="#" id="nav-fuzzy" data-section="fuzzy">
+                <span class="nav-icon">🧠</span>
+                <span>Fuzzy</span>
+            </a>
+            <a href="#" id="nav-terapi" data-section="terapi">
+                <span class="nav-icon">🎮</span>
+                <span>Mulai Terapi</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="connection-status">
+                <span class="status-dot"></span>
+                <span>System Online</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 🔘 Tombol Toggle Sidebar -->
+    <button class="sidebar-toggle" id="sidebar-toggle" title="Buka/Tutup Sidebar">
+        <span class="toggle-icon">☰</span>
+    </button>
+
+    <!-- 📄 MAIN CONTENT -->
+    <main class="main-content" id="main-content">
+
+        <!-- ======================================== -->
+        <!-- 🏠 SECTION: HOME -->
+        <!-- ======================================== -->
+        <section id="section-home" class="content-section active">
+            
+            <!-- About Us -->
+            <div class="about-container">
+                <div class="about-header">
+                    <div class="about-icon about-trigger" id="btn-about" title="Klik untuk info pengembang">🦾</div>
+                    <h2>ABOUT US</h2>
+                    <div class="about-subtitle">Klik ikon untuk info pengembang</div>
+                </div>
+
+                <!-- Info pengembang (hidden by default) -->
+                <div class="about-card about-collapsible" id="about-info" style="display: none;">
+                    <div class="about-profile">
+                        <div class="profile-avatar">👨‍💻</div>
+                        <h3 class="profile-name">Tim Pengembang</h3>
+                        <p class="profile-role">Universitas Jember</p>
+                    </div>
+
+                    <div class="about-info">
+                        <div class="developer-list">
+                            <div class="developer-item">
+                                <span class="dev-number">01</span>
+                                <div class="dev-info">
+                                    <a href="https://www.linkedin.com/in/ferdian-rizky-b51b9b24b/" 
+                                       target="_blank" 
+                                       class="dev-name dev-link">
+                                       Ferdian Rizky Ramadhani
+                                    </a>
+                                    <span class="dev-nim">221904102001</span>
+                                </div>
+                            </div>
+                            <div class="developer-item">
+                                <span class="dev-number">02</span>
+                                <div class="dev-info">
+                                    <a href="https://www.linkedin.com/in/dimas-vebrian-ramadani-aa90b3250/" 
+                                       target="_blank" 
+                                       class="dev-name dev-link">
+                                       Dimas Vebrian Ramadani
+                                    </a>
+                                    <span class="dev-nim">221904102013</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <span class="info-icon">📧</span>
+                            <span>ferdianrizky721@gmail.com</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🔬</span>
+                            <span>Tugas Akhir - Robot Terapi Rehabilitasi Lengan Pasien Stroke</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deskripsi sistem -->
+                <div class="about-description">
+                    <h4>📋 Tentang Sistem Ini</h4>
+                    <p>
+                        <strong>RehabSys</strong> adalah robot terapi rehabilitasi lengan yang dirancang khusus untuk 
+                        membantu pemulihan pasien stroke. Sistem ini mengintegrasikan 
+                        <strong>Arduino Mega 2560 WiFi</strong> sebagai pengendali utama, 
+                        <strong>ESP32</strong> sebagai jembatan komunikasi nirkabel, serta berbagai sensor dan aktuator 
+                        untuk menciptakan terapi yang adaptif dan terpantau secara real-time.
+                    </p>
+                    <p>
+                        <strong>🔬 Sensor & Aktuator:</strong><br>
+                        • <strong>Sensor EMG (Elektromiografi)</strong> mendeteksi sinyal listrik otot pasien untuk mengukur kekuatan kontraksi.<br>
+                        • <strong>Potensiometer</strong> dipasang pada setiap sendi lengan untuk mengukur sudut gerakan secara presisi.<br>
+                        • <strong>Motor Stepper NEMA 23</strong> dengan driver <strong>DM542</strong> memberikan bantuan gerakan dengan torsi yang kuat dan terkontrol.
+                    </p>
+                    <p>
+                        <strong>🧠 Kontrol Fuzzy Logic:</strong><br>
+                        Sistem menggunakan logika <strong>Fuzzy Logic</strong> untuk menentukan tingkat bantuan motor. 
+                        Input dari sensor EMG diklasifikasikan menjadi tiga kategori: 
+                        <em>Lemah</em>, <em>Sedang</em>, atau <em>Kuat</em>. Berdasarkan klasifikasi tersebut, 
+                        motor stepper memberikan bantuan penuh, sebagian, atau minimal, sehingga terapi selalu 
+                        sesuai dengan kemampuan aktual pasien dan mencegah kelelahan berlebih.
+                    </p>
+                    <p>
+                        <strong>🌐 Internet of Things (IoT):</strong><br>
+                        Data sensor dan status terapi dikirim secara nirkabel melalui <strong>ESP32</strong> ke 
+                        <strong>Cloudflare Worker</strong> dan disimpan di <strong>Cloudflare KV Storage</strong>. 
+                        Website monitoring (frontend) menampilkan sudut lengan dan sinyal EMG secara real-time 
+                        tanpa perlu instalasi aplikasi tambahan. Tenaga medis atau keluarga dapat memantau 
+                        perkembangan pasien dari mana saja.
+                    </p>
+                    <p>
+                        <strong>📊 Fitur Unggulan:</strong><br>
+                        • <em>Penyimpanan data pasien</em> (nama, umur, alamat) terintegrasi.<br>
+                        • <em>Tombol Mulai Terapi</em> yang langsung mengirim perintah ke robot.<br>
+                        • <em>Monitoring real-time</em> sudut dan sinyal EMG di halaman web.<br>
+                        • <em>Download data historis</em> dalam format Excel dengan pilihan rentang tanggal.<br>
+                        • <em>Sidebar navigasi</em> yang intuitif untuk mengakses About Us, Hasil Monitoring, dan Mulai Terapi.
+                    </p>
+                    <p>
+                        <strong>🏥 Manfaat Rehabilitasi:</strong><br>
+                        Dengan pendekatan ini, terapi menjadi lebih personal, aman, dan terukur. 
+                        Pasien dapat berlatih secara mandiri dengan pengawasan minimal, 
+                        sementara tenaga medis dapat mengevaluasi kemajuan berdasarkan data objektif. 
+                        Sistem ini diharapkan mampu mempercepat proses pemulihan motorik lengan pasca-stroke.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- 📊 SECTION: HASIL MONITORING -->
+        <!-- ======================================== -->
+        <section id="section-hasil" class="content-section">
+            
+            <div class="data-container">
+                <div class="data-header">
+                    <div class="data-icon">📊</div>
+                    <h2>HASIL DATA MONITORING</h2>
+                    <div class="data-subtitle">Real-time Patient Data</div>
+                </div>
+
+                <div class="data-links">
+                    <a href="https://backend-monitoring-staging.backendta.workers.dev/api/getBackup" 
+                       target="_blank" 
+                       class="data-link-card">
+                        <span class="link-icon">🌐</span>
+                        <div class="link-info">
+                            <span class="link-title">Cloudflare Worker API</span>
+                            <span class="link-desc">Lihat data monitoring terbaru (JSON)</span>
+                        </div>
+                        <span class="link-arrow">↗</span>
+                    </a>
+
+                    <a href="https://dash.cloudflare.com/" 
+                       target="_blank" 
+                       class="data-link-card">
+                        <span class="link-icon">📁</span>
+                        <div class="link-info">
+                            <span class="link-title">Cloudflare Dashboard</span>
+                            <span class="link-desc">Kelola KV Storage & Worker</span>
+                        </div>
+                        <span class="link-arrow">↗</span>
+                    </a>
+                </div>
+
+                <!-- Preview data terbaru -->
+                <div class="data-preview">
+                    <h4>📡 Data Terbaru</h4>
+                    <div id="data-preview-content" class="preview-box">
+                        <span class="loading-text">Mengambil data...</span>
+                    </div>
+                    <button id="btn-refresh-data" class="refresh-btn">
+                        <span>🔄</span> Refresh Data
+                    </button>
+                </div>
+
+                <!-- Tombol Download Excel -->
+                <button id="btn-download-excel" class="download-btn" style="margin-top: 20px;">
+                    <span>📥</span> Download Excel
+                </button>
+            </div>
+
+            <!-- Modal Pilih Rentang Tanggal -->
+            <div id="datePickerModal" class="modal-overlay" style="display: none;">
+                <div class="modal-content">
+                    <h3>📅 Pilih Rentang Tanggal</h3>
+                    <div class="date-inputs">
+                        <div class="date-group">
+                            <label>Dari Tanggal:</label>
+                            <input type="date" id="startDate">
+                        </div>
+                        <div class="date-group">
+                            <label>Sampai Tanggal:</label>
+                            <input type="date" id="endDate">
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button id="btn-cancel-download" class="cancel-btn">❌ Batal</button>
+                        <button id="btn-confirm-download" class="confirm-btn">✅ Download</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- 🧠 SECTION: FUZZY -->
+        <!-- ======================================== -->
+        <section id="section-fuzzy" class="content-section">
+            <div class="fuzzy-container">
+                <div class="fuzzy-header">
+                    <div class="fuzzy-icon">🧠</div>
+                    <h2>FUZZY LOGIC CONTROL</h2>
+                    <div class="fuzzy-subtitle">Sistem Kendali Cerdas untuk Terapi</div>
+                </div>
+
+                <div class="fuzzy-grid">
+                    <!-- Bagian Penjelasan -->
+                    <div class="fuzzy-card">
+                        <h3>📖 Penjelasan Fuzzy</h3>
+                        <p>
+                            Sistem ini menggunakan <strong>Fuzzy Logic</strong> untuk menentukan tingkat bantuan motor stepper 
+                            berdasarkan kekuatan otot pasien yang diukur melalui sensor <strong>EMG</strong>.
+                        </p>
+                        <p>
+                            <strong>Input:</strong> Sinyal EMG (0–1023)<br>
+                            <strong>Output:</strong> Persentase bantuan motor (30% – 80%)
+                        </p>
+                        <p><strong>Aturan Fuzzy:</strong></p>
+                        <ul>
+                            <li>Jika EMG <strong>Lemah</strong> (0–400) → Bantuan <strong>80%</strong> (motor cepat)</li>
+                            <li>Jika EMG <strong>Sedang</strong> (400–700) → Bantuan <strong>50%</strong></li>
+                            <li>Jika EMG <strong>Kuat</strong> (>700) → Bantuan <strong>30%</strong> (motor lambat)</li>
+                        </ul>
+                        <p>
+                            Dengan pendekatan ini, terapi selalu disesuaikan dengan kemampuan aktual pasien.
+                        </p>
+                    </div>
+
+                    <!-- Bagian Download -->
+                    <div class="fuzzy-card">
+                        <h3>📥 Download Data Fuzzy</h3>
+                        <p>Unduh perhitungan fuzzy dan grafik fungsi keanggotaan.</p>
+                        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                            <button id="btn-download-excel-fuzzy" class="download-btn">
+                                <span>📥</span> Download Excel Perhitungan
+                            </button>
+                            <button id="btn-download-grafik-fuzzy" class="download-btn" 
+                                    style="background: linear-gradient(135deg, rgba(0,150,255,0.7) 0%, rgba(0,200,255,0.5) 100%); border-color: rgba(0,150,255,0.5);">
+                                <span>📊</span> Download Grafik Fuzzy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- 🎮 SECTION: MULAI TERAPI -->
+        <!-- ======================================== -->
+        <section id="section-terapi" class="content-section">
+            
+            <!-- Sub-section: Form Pasien -->
+            <div id="sub-form" class="sub-section active">
+                <div class="container">
+                    <div class="form-header">
+                        <div class="header-icon">⚕️</div>
+                        <h2>PATIENT DATA SYSTEM</h2>
+                        <div class="header-subtitle">Medical Monitoring Interface</div>
+                    </div>
+                    
+                    <form id="formPasien">
+                        <div class="form-group">
+                            <label for="nama">
+                                <span class="label-icon">👤</span>
+                                <span class="label-text">NAMA PASIEN</span>
+                            </label>
+                            <input type="text" id="nama" placeholder="Masukkan nama lengkap" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="umur">
+                                <span class="label-icon">📅</span>
+                                <span class="label-text">UMUR</span>
+                            </label>
+                            <input type="number" id="umur" placeholder="Masukkan umur" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="alamat">
+                                <span class="label-icon">📍</span>
+                                <span class="label-text">ALAMAT</span>
+                            </label>
+                            <input type="text" id="alamat" placeholder="Masukkan alamat lengkap" required>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <span class="btn-icon">▶</span>
+                            <span class="btn-text">MULAI MONITORING</span>
+                        </button>
+                    </form>
+
+                    <p id="status"></p>
+                </div>
+            </div>
+
+            <!-- Sub-section: Monitoring -->
+            <div id="sub-monitoring" class="sub-section">
+                <div class="monitor-container">
+                    <div class="patient-info-header">
+                        <h2>📊 MONITORING PASIEN</h2>
+                        <div class="patient-details">
+                            <div class="patient-detail-item">
+                                <span class="detail-icon">👤</span>
+                                <span class="detail-label">Nama:</span>
+                                <span class="detail-value" id="displayNama">-</span>
+                            </div>
+                            <div class="patient-detail-item">
+                                <span class="detail-icon">📅</span>
+                                <span class="detail-label">Umur:</span>
+                                <span class="detail-value" id="displayUmur">-</span>
+                            </div>
+                            <div class="patient-detail-item">
+                                <span class="detail-icon">📍</span>
+                                <span class="detail-label">Alamat:</span>
+                                <span class="detail-value" id="displayAlamat">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="monitor-grid">
+                        <div class="monitor-box">
+                            <h3>Sudut 1</h3>
+                            <div id="sudut1">0°</div>
+                        </div>
+                        <div class="monitor-box">
+                            <h3>Sudut 2</h3>
+                            <div id="sudut2">0°</div>
+                        </div>
+                        <div class="monitor-box">
+                            <h3>Sudut 3</h3>
+                            <div id="sudut3">0°</div>
+                        </div>
+                        <div class="monitor-box ecg">
+                            <h3>⚡ Sensor ECG</h3>
+                            <canvas id="ecgCanvas" width="400" height="150"></canvas>
+                        </div>
+                    </div>
+
+                    <button id="btn-kembali" class="back-btn">
+                        <span>◀</span> Kembali ke Form
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<!-- ===== HANYA SCRIPT.JS (monitoring.js akan di-load secara dinamis) ===== -->
+<script type="module" src="/script.js"></script>
+
+</body>
+</html>
