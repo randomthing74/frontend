@@ -1,23 +1,9 @@
 {
-  "name": "frontend",
-  "private": true,
+  "name": "rehabsys-frontend",
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "npx vite build",
-    "preview": "vite preview",
-    "test": "vitest",
-    "deploy": "wrangler pages deploy dist"
+    "build": "mkdir -p dist && cp -r index.html style.css script.js img dist/"
   },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.4.0",
-    "vitest": "^2.0.5",
-    "wrangler": "^3.80.0"
-  }
+  "devDependencies": {}
 }
