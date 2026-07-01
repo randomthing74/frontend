@@ -491,8 +491,13 @@ function startRealtimePolling() {
           else if (data[`sudut${i}`] !== undefined) el.textContent = data[`sudut${i}`] + "°";
         }
       }
+      // Update nilai ECG global
       if (data.ecgNilaiRata !== undefined || data.ecgNilai !== undefined) {
-        window.ecgActualValue = data.ecgNilaiRata || data.ecgNilai || window.ecgActualValue;
+        const newVal = data.ecgNilaiRata || data.ecgNilai || 500;
+        if (window.ecgActualValue !== newVal) {
+          window.ecgActualValue = newVal;
+          console.log('❤️ ECG updated:', newVal);
+        }
       }
     } catch (err) { console.warn("Polling error:", err.message); }
   }, 300);
