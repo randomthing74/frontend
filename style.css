@@ -788,13 +788,6 @@ input:focus {
 
 .monitor-box.ecg-value:hover { animation: heartbeat 0.8s ease-in-out infinite; }
 
-#ecgCanvas {
-  position: relative;
-  z-index: 1;
-  display: block;
-  margin: 0 auto;
-}
-
 .patient-info-header { margin-bottom: 30px; }
 
 .patient-info-header h2 {

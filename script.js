@@ -79,10 +79,6 @@ function setActiveSection(section) {
   sectionFuzzy.classList.toggle("active", section === "fuzzy");
   sectionTerapi.classList.toggle("active", section === "terapi");
 
-  if (section !== "terapi" && window.ecgAnimationId) {
-    cancelAnimationFrame(window.ecgAnimationId);
-    window.ecgAnimationId = null;
-  }
   if (section === "hasil") {
     fetchLatestData();
   }
@@ -469,7 +465,6 @@ function switchToMonitoring() {
   document.getElementById("displayNama").textContent = localStorage.getItem("namaPasien") || "-";
   document.getElementById("displayUmur").textContent = (localStorage.getItem("umurPasien") || "-") + " tahun";
   document.getElementById("displayAlamat").textContent = localStorage.getItem("alamatPasien") || "-";
-  initECGGraph();
   startRealtimePolling();
 }
 
@@ -491,13 +486,15 @@ function startRealtimePolling() {
           else if (data[`sudut${i}`] !== undefined) el.textContent = data[`sudut${i}`] + "°";
         }
       }
-      // Update nilai ECG global
-      if (data.ecgNilaiRata !== undefined || data.ecgNilai !== undefined) {
-        const newVal = data.ecgNilaiRata || data.ecgNilai || 500;
-        if (window.ecgActualValue !== newVal) {
-          window.ecgActualValue = newVal;
-          console.log('❤️ ECG updated:', newVal);
-        }
+      // Update ECG value (angka saja, bukan grafik)
+      const ecgEl = document.getElementById("ecg-value");
+      if (ecgEl) {
+        const ecg = data.ecgNilaiRata || data.ecgNilai || 0;
+        ecgEl.textContent = ecg;
+        // Warna berdasarkan kategori
+        if (ecg <= 400) ecgEl.style.color = "#ff4757";
+        else if (ecg <= 600) ecgEl.style.color = "#ffa502";
+        else ecgEl.style.color = "#2ed573";
       }
     } catch (err) { console.warn("Polling error:", err.message); }
   }, 300);
@@ -508,7 +505,6 @@ document.getElementById("btn-kembali")?.addEventListener("click", () => {
   document.getElementById("sub-form").classList.add("active");
   if (realtimePollingInterval) { clearInterval(realtimePollingInterval); realtimePollingInterval = null; }
   if (window.intervalID) { clearInterval(window.intervalID); window.intervalID = null; }
-  if (window.ecgAnimationId) { cancelAnimationFrame(window.ecgAnimationId); window.ecgAnimationId = null; }
   fetch(`${cloudflareWorkerURL}/api/command`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ command: "stop" }) }).catch(() => {});
 });
 
@@ -532,66 +528,6 @@ function showTransitionAnimation() {
   document.body.appendChild(overlay);
   setTimeout(() => overlay.classList.add('active'), 10);
   setTimeout(() => { overlay.classList.remove('active'); setTimeout(() => overlay.remove(), 500); }, 2000);
-}
-
-// =============================================================
-// 📊 ECG GRAPH (60 fps)
-// =============================================================
-window.ecgActualValue = 500;
-let ecgCanvas, ecgCtx, ecgPoints = [], ecgX = 0, ecgLastUpdate = 0;
-window.ecgAnimationId = null;
-
-function initECGGraph() {
-  ecgCanvas = document.getElementById("ecgCanvas");
-  if (!ecgCanvas) return;
-  ecgCtx = ecgCanvas.getContext("2d");
-  ecgPoints = []; ecgX = 0;
-  if (window.ecgAnimationId) cancelAnimationFrame(window.ecgAnimationId);
-  drawECGLoop();
-}
-
-function drawECGGrid() {
-  if (!ecgCtx || !ecgCanvas) return;
-  const w = ecgCanvas.width, h = ecgCanvas.height;
-  ecgCtx.strokeStyle = "rgba(0,255,255,0.06)"; ecgCtx.lineWidth = 0.5;
-  for (let x = 0; x < w; x += 5) { ecgCtx.beginPath(); ecgCtx.moveTo(x,0); ecgCtx.lineTo(x,h); ecgCtx.stroke(); }
-  for (let y = 0; y < h; y += 5) { ecgCtx.beginPath(); ecgCtx.moveTo(0,y); ecgCtx.lineTo(w,y); ecgCtx.stroke(); }
-  ecgCtx.strokeStyle = "rgba(0,255,255,0.18)"; ecgCtx.lineWidth = 1;
-  for (let x = 0; x < w; x += 25) { ecgCtx.beginPath(); ecgCtx.moveTo(x,0); ecgCtx.lineTo(x,h); ecgCtx.stroke(); }
-  for (let y = 0; y < h; y += 25) { ecgCtx.beginPath(); ecgCtx.moveTo(0,y); ecgCtx.lineTo(w,y); ecgCtx.stroke(); }
-  ecgCtx.strokeStyle = "rgba(0,255,255,0.25)"; ecgCtx.lineWidth = 1.5;
-  ecgCtx.beginPath(); ecgCtx.moveTo(0, h/2); ecgCtx.lineTo(w, h/2); ecgCtx.stroke();
-  ecgCtx.fillStyle = "rgba(0,212,255,0.6)"; ecgCtx.font = "11px 'Orbitron', monospace";
-  ecgCtx.fillText("AMPLITUDO", 8, 18); ecgCtx.fillText("WAKTU →", w-70, h-8);
-}
-
-function drawECGLoop(timestamp) {
-  if (!ecgCtx || !ecgCanvas) { window.ecgAnimationId = requestAnimationFrame(drawECGLoop); return; }
-  if (timestamp && timestamp - ecgLastUpdate < 16) { window.ecgAnimationId = requestAnimationFrame(drawECGLoop); return; }
-  if (timestamp) ecgLastUpdate = timestamp;
-  const w = ecgCanvas.width, h = ecgCanvas.height, centerY = h/2;
-  ecgCtx.clearRect(0,0,w,h);
-  drawECGGrid();
-  const currentECG = window.ecgActualValue || 500;
-  const y = centerY - ((currentECG - 512) / 512) * (h/2 - 30);
-  ecgPoints.push({x: ecgX, y});
-  if (ecgPoints.length > w) ecgPoints.shift();
-  if (ecgPoints.length > 1) {
-    ecgCtx.shadowBlur = 18; ecgCtx.shadowColor = "rgba(0,255,136,0.9)";
-    const gradient = ecgCtx.createLinearGradient(0,0,0,h);
-    gradient.addColorStop(0,"#00ffcc"); gradient.addColorStop(0.5,"#00ff88"); gradient.addColorStop(1,"#00cc66");
-    ecgCtx.strokeStyle = gradient; ecgCtx.lineWidth = 2.5; ecgCtx.lineCap = "round"; ecgCtx.lineJoin = "round";
-    ecgCtx.beginPath();
-    const offsetX = ecgX >= w ? ecgX - w : 0;
-    for (let i=0; i<ecgPoints.length; i++) {
-      const px = ecgPoints[i].x - offsetX;
-      if (i===0) ecgCtx.moveTo(px, ecgPoints[i].y); else ecgCtx.lineTo(px, ecgPoints[i].y);
-    }
-    ecgCtx.stroke(); ecgCtx.shadowBlur = 0;
-    ecgCtx.fillStyle = "rgba(0,20,10,0.05)"; ecgCtx.fillRect(0,0,w,h);
-  }
-  ecgX++; if (ecgX > w*2) ecgX = w;
-  window.ecgAnimationId = requestAnimationFrame(drawECGLoop);
 }
 
 // =============================================================
